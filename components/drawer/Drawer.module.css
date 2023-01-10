@@ -1,0 +1,8 @@
+.containerGenerateInvoice{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: .5rem;
+}
+.containerTable{
+    margin-top: 2rem;
+}

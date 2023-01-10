@@ -1,0 +1,67 @@
+.overalContainer{
+    margin-top: 1.2rem;
+}
+
+.containerPagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.categoryContainer{
+    display:flex;
+    color: black;
+
+}
+.container_card{
+    display:unset;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.textPrice{
+    text-decoration: line-through;
+    font-style: italic;
+}
+.cardBody{
+    padding: 0;
+}
+.cardText{
+    text-align: center;
+    background: grey;
+}
+.cardTextTitle{
+    padding: 0;
+    margin: 0;
+}
+.containerBorderSize{
+    display: flex;
+}
+.borderSize{
+    border: solid .2rem grey;
+    margin: .1rem;
+    background-color: grey;
+    color: white;
+}
+.carrouselOverlay{
+    overflow: overlay;
+    flex-wrap: nowrap;
+
+}
+.colcarrouselItemVisible{
+    display: flex;
+    justify-content: center;
+}
+.colcarrouselItem{
+    display: flex;
+    justify-content: center;
+}
+@media only screen and (max-width: 600px) {
+    /* For mobile phones: */
+    .colcarrouselItem{
+      width: 100%;
+    }
+    /* .colcarrouselItem{
+        display: none;
+    } */
+  }
+  

@@ -1,0 +1,13 @@
+.containerNames{
+    justify-content: center;
+    align-items: center;
+}
+.genderOption{
+    cursor: pointer;
+}
+.containerMark{
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    cursor: pointer;
+}

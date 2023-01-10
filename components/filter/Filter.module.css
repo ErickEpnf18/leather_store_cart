@@ -1,0 +1,10 @@
+
+.container_general{
+    padding: .6rem 0;
+}
+.container{
+    margin: .4rem 0;
+}
+.filter_container{
+    display: inline-flex;
+}

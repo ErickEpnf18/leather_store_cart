@@ -1,0 +1,9 @@
+.container{
+    background-color: black;
+}
+.containerImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}

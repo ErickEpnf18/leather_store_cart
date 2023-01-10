@@ -1,0 +1,18 @@
+.header{
+    background-color: black;
+    color: white;
+}.card{
+    display: inline-block;
+}
+.loginCard{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.loginCardContainer{
+    display: flex;
+}
+.cardImage{
+    width: 60%;
+}
