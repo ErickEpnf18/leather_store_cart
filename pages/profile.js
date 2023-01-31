@@ -5,7 +5,7 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Fab, Grid, IconButton } from "@mui/material";
+import { Badge, Fab, Grid, IconButton } from "@mui/material";
 import style from "./styles/Profile.module.css";
 import AccessibilityIcon from "@mui/icons-material/Accessibility";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -14,11 +14,11 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useEffect } from "react";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
-import { auth } from "firebase-config";
 import { useRouter } from "next/router";
 import { getItems, getItemsByConditionAll } from "../service/api";
+import Layout from "components/layout";
 import Drawer from "components/drawer";
-
+import {auth} from "../firebase-config";
 const Profile = (props) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [user, setUser] = useState(null);
@@ -28,15 +28,14 @@ const Profile = (props) => {
 
   const doStuff = async () => {
     let email = "";
-    await onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser !== null) {
-        email = currentUser.email;
-      }
-    });
+    let user__ = JSON.parse(window.localStorage.getItem("currentUser"));
+    let karts__ = JSON.parse(window.localStorage.getItem("kartItems"));
     const allItems = await getItemsByConditionAll("users");
-    const itemFiltered = allItems.filter((i) => i.email === email);
+    const itemFiltered = allItems.filter((i) => i.email === user__.email);
     setUser(itemFiltered);
+    setKarts(karts__);
   };
+
   useEffect(() => {
     doStuff();
   }, []);
@@ -60,8 +59,10 @@ const Profile = (props) => {
   };
 
   return (
+    <Layout>
     <Grid className={style.container}>
       <Card sx={{ maxWidth: 345 }}>
+        
         <div className={style.container}></div>
         {user ? (
           user.map((i, index) => (
@@ -82,18 +83,22 @@ const Profile = (props) => {
                 </Typography>
               </CardContent>
               <CardActions>
-                <IconButton onClick={handleWishes}>
+                {/* <IconButton onClick={handleWishes}>
                   <Fab aria-label="like" color="primary">
                     <FavoriteIcon />
                   </Fab>
-                </IconButton>
+                </IconButton> */}
                 <IconButton onClick={handleKart}>
                   <Fab aria-label="like" color="primary">
+                <Badge 
+                  badgeContent={karts.length !== null ? karts.length : ""} 
+                  color="error">
                     <ShoppingCartIcon />
+                </Badge>
                   </Fab>
                 </IconButton>
               </CardActions>
-              <Drawer toggleDrawer={toggleDrawer} open={openDrawer} />
+              <Drawer toggleDrawer={toggleDrawer} open={openDrawer} data={karts}/>
             </div>
           ))
         ) : (
@@ -101,6 +106,7 @@ const Profile = (props) => {
         )}
       </Card>
     </Grid>
+    </Layout>
   );
 };
 

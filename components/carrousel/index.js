@@ -16,69 +16,72 @@ import Link from "next/link";
 const CarouselContainer = () => {
   return (
     <Carousel fade className={styles.container}>
-        <Carousel.Item>
+      <Carousel.Item>
         <>
-      <Link
-        href={{
-          pathname: "/categories",
-          query: { type: "coats", gender: "men" },
-        }}
-      >
-          <div className={styles.containerImage}>
-            <Image
-              className="d-block w-100"
-              src={image11}
-              width={300}
-              height={300}
-              alt="First slide"
-            />
-          </div>
-      </Link>
+          <Link
+            href={{
+              pathname: "/categories",
+              query: { type: "coats", gender: "men" },
+            }}
+          >
+            <div className={styles.containerImage}>
+              <Image
+                id="id_image_carrousel_1"
+                className="d-block w-70 "
+                src={image11}
+                width={300}
+                height={300}
+                alt="First slide"
+              />
+            </div>
+          </Link>
           <Carousel.Caption>
             <h3>Abrigos</h3>
             <p>Modelos unicos y de moda.</p>
           </Carousel.Caption>
         </>
-        </Carousel.Item>
+      </Carousel.Item>
 
       <Carousel.Item>
-      <Link
-        href={{
-          pathname: "/categories",
-          query: { type: "dresses", gender: "men" },
-        }}
-      >
-        <div className={styles.containerImage}>
-          <Image
-            className="d-block w-100 mx-auto"
-            src={image22}
-            width={300}
-            height={300}
-            alt="Second slide"
-          />
-        </div>
-</Link>
+        <Link
+          href={{
+            pathname: "/categories",
+            query: { type: "dresses", gender: "men" },
+          }}
+        >
+          <div className={styles.containerImage}>
+            <Image
+              id="id_image_carrousel_2"
+              className="d-block w-70 "
+              src={image22}
+              width={300}
+              height={300}
+              alt="Second slide"
+            />
+          </div>
+        </Link>
         <Carousel.Caption>
           <h3>Ropa Deportiva</h3>
           <p>Tendencia a la moda y juvenil</p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item>
-      <Link
-        href={{
-          pathname: "/categories",
-          query: { type: "makeup", gender: "women" },
-        }}
-      >
-        <div className={styles.containerImage}>
-          <Image
-            className="d-block w-100"
-            src={image33}
-            width={300}
-            height={300}
-            alt="Third slide"
-          />
-        </div>
+        <Link
+          href={{
+            pathname: "/categories",
+            query: { type: "makeup", gender: "women" },
+          }}
+        >
+          <div className={styles.containerImage}>
+            <Image
+              id="id_image_carrousel_3"
+              className="d-block w-70 "
+              src={image33}
+              width={300}
+              height={300}
+              alt="Third slide"
+            />
+          </div>
         </Link>
 
         <Carousel.Caption>

@@ -5,7 +5,7 @@ import styles from "./Footer.module.css";
 import Paper from "@mui/material/Paper";
 import { indigo } from '@mui/material/colors';
 // #0d6efd
-console.log(indigo[900])
+//console.log(indigo[900])
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,

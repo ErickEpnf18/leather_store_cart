@@ -7,12 +7,20 @@ import { Container, Nav, Navbar } from "react-bootstrap";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import MenuIcon from "@mui/icons-material/Menu";
 import Link from "next/link";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase-config";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { useDispatch } from 'react-redux'
+import { logout } from '../../redux/reducers/authSlice'
 const Dashboard = () => {
+  const router = useRouter()
+  const dispatch = useDispatch()
   return (
     <>
       <Navbar bg="dark" variant="dark">
         <Container>
-          <Navbar.Brand href="#home">
+          <Navbar.Brand href="/admin">
             <AdminPanelSettingsIcon fontSize="large" /> Administrador
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -28,19 +36,27 @@ const Dashboard = () => {
                 </Nav.Link>
               </Box>
               <Box sx={{ display: { xs: "none", sm: "flex" } }}>
-                  <Link href="/admin">
-                    
-                <Nav.Link href="/admin">
-                    Products
-                </Nav.Link>
-                    </Link>
-                    <Link
-                                href={{
-                                  pathname: "/admin/metrics",
-                                }}
-                              >
-                <Nav.Link href="/admin/metrics">Metricas</Nav.Link>
-                    </Link>
+                <Link href="/admin/metrics" className="navbar-expand navbar-nav nav-link navbar-nav nav-link.active navbar-nav nav-link active">
+                  Metricas
+                </Link>
+                <Link href="/"
+                    id="id_admin_logout"
+                    className="navbar-expand navbar-nav nav-link navbar-nav nav-link.active navbar-nav nav-link active"
+                    onClick={() => {
+                      signOut(auth)
+                        .then(async () => {
+                          console.log("Successful logout");
+                          await axios.post("/api/auth/logout");
+                          dispatch(logout(values));
+                          router.push("/")
+                        }).catch((error) => {
+                          //console.error("An error happened");
+                          router.push("/")
+                        });
+                    }}
+                    >
+                    Salir
+                </Link>
                 {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
                   <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
                   <NavDropdown.Item href="#action4">

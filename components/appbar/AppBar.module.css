@@ -4,6 +4,7 @@
 }
 .genderOption{
     cursor: pointer;
+    border-color: black;
 }
 .containerMark{
     display: flex;

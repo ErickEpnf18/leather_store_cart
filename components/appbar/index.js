@@ -38,6 +38,12 @@ import SpeedDial from "components/speedDial"
 import Drawer from "components/drawer"
 import Link from "next/link";
 import { signOut } from "firebase/auth";
+import { auth } from "../../firebase-config"
+import axios from "axios";
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from "redux/reducers/authSlice";
+import { getItems, getItemsByContional } from "service/api";
+
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -85,14 +91,31 @@ export default function AppBarStore() {
   const [anchorElFemale, setAnchorElFemale] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [mobileMoreAnchorLeft, setMobileMoreAnchorLeft] = React.useState(null);
-
+  const [batchContent, setBatchContent] = React.useState(null);
+  const [dataUser, setDataUser] = React.useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMenuOpenMale = Boolean(anchorElMale);
   const isMenuOpenFemale = Boolean(anchorElFemale);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const isMobileMenuOpenLeft = Boolean(mobileMoreAnchorLeft);
-const router = useRouter()
+  const router = useRouter()
+  const dispatch = useDispatch()
+  //console.log("********************************", user.items.length, user);
+  const user_ = useSelector((state) => state.user);
 
+  useEffect(() => {
+    const getDataUser = async() => {
+        let user__ = JSON.parse(window.localStorage.getItem("currentUser"));
+        const getDataUser = await getItems("users")
+        const current_user = getDataUser.filter(items => items.email === user__.email)
+        console.log(current_user)
+        setDataUser(current_user)
+        setBatchContent(current_user[0].items.length)
+
+    }
+    getDataUser();
+  }, [batchContent])
+  
   //drawer
   const [openDrawer, setOpenDrawer] = React.useState(false);
   const handleDrawer = (word) => {
@@ -164,7 +187,14 @@ const router = useRouter()
       
       }}>Mi Cuenta</MenuItem>
       <MenuItem onClick={() => {handleMenuClose();
-      signOut();
+      signOut(auth).then( async () => {
+        console.log('Successful logout');
+        await axios.post("/api/auth/logout");
+        dispatch(logout(values));
+      }).catch((error) => {
+        //console.error("An error happened")
+      });
+      
        router.push({pathname: '/'}) 
       
       }}><ExitToAppIcon/>Salir</MenuItem>
@@ -297,16 +327,16 @@ const router = useRouter()
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem onClick={()=>handleDrawer("favorites")}>
+      {/* <MenuItem onClick={()=>handleDrawer("favorites")}>
         <IconButton size="large" aria-label="show 4 new products" color="inherit" >
           <Badge 
-          // badgeContent={4} 
+           //badgeContent={4} 
           color="error">
             <FavoriteBorderIcon />
           </Badge>
         </IconButton>
         <p>Favoritos</p>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem   onClick={() =>handleDrawer("cart")}>
         <IconButton
           size="large"
@@ -315,7 +345,7 @@ const router = useRouter()
         
         >
           <Badge
-          //  badgeContent={17}
+          badgeContent={batchContent}
             color="error">
             <ShoppingCartOutlinedIcon />
           </Badge>
@@ -375,12 +405,6 @@ const toggleDrawer = (newOpen) => () => {
   setOpenDrawer(newOpen);
   console.log("main drawer", newOpen)
 };
-const handleClick = (e) => {
-  console.log("e", e)
-}
-useEffect(() => {
-
-},[openDrawer])
 //drawer
 
   return (
@@ -407,19 +431,21 @@ useEffect(() => {
                 <div className={styles.containerMark}>
           <Grid sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
             <Image
+              id="id_image_logo"
               src={jacket}
               alt="leather clothes"
-              width="45px"
-              height="45px"
+              width="50"
+              height="50"
             />
           </Grid>
           <Typography
+            className="text-white"
             variant="subtitle1"
             noWrap
             component=""
             sx={{ display: { xs: "none", md: "block" } }}
           >
-            STORE KIMKOM
+            {dataUser ? dataUser[0].username : "Anonymous"}
           </Typography>
           </div>
           </Link>
@@ -448,6 +474,7 @@ useEffect(() => {
               </Typography>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <Typography
+                className={styles.genderOption}
                 onClick={handleProfileMenuOpenFemale}
                 variant="subtitle1"
                 noWrap
@@ -466,7 +493,7 @@ useEffect(() => {
             >
               {/* <SearchOutlinedIcon /> */}
             </IconButton>
-            <IconButton
+            {/* <IconButton
               size="large"
               aria-label="show 4 new products favorites"
               color="inherit"
@@ -474,11 +501,11 @@ useEffect(() => {
               
             >
               <Badge 
-              // badgeContent={4}
+              badgeContent={4}
                color="error">
                 <FavoriteBorderIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <IconButton
               size="large"
               aria-label="show shopping cart"
@@ -486,7 +513,7 @@ useEffect(() => {
               onClick={()=>handleDrawer("cart")}
             >
               <Badge 
-              // badgeContent={17} 
+              badgeContent={batchContent} 
               color="error">
                 <ShoppingCartOutlinedIcon />
               </Badge>
@@ -528,7 +555,7 @@ useEffect(() => {
       {renderMenuFemale}
       {/* <button onClick={()=> itemCallBack("hello world")}> clicke me item</button> */}
       {/* <button onClick={()=> setOpenDrawer(true)}> Open Drawer</button> */}
-      <Drawer toggleDrawer={toggleDrawer} open={openDrawer}/>
+      <Drawer toggleDrawer={toggleDrawer} open={openDrawer} data={dataUser}/>
       
       {/* <SpeedDial/> */}
     </Box>

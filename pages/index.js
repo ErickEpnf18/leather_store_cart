@@ -23,15 +23,20 @@ import {
   signInWithFacebook,
   signInWithGoogle,
 } from "firebase-config";
-import { useSelector, useDispatch } from 'react-redux'
-import { logins, logouts, loading } from '../redux/reducers/userSlice'
-
+// redux
+import { useDispatch } from 'react-redux'
+import { login } from '../redux/reducers/authSlice'
+import { addEmail } from '../redux/reducers/kartsSlice'
+// redux
+import axios from 'axios';
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import imgLogin from "imgs/auth/login.jpg";
+import imgLogin_2 from "imgs/auth/leather_store.jpg";
 import { useRouter } from 'next/router'
 import { createItem } from "../service/api";
+import { toast } from "react-toastify";
 // schema yup
 const schema = yup
   .object({
@@ -39,36 +44,12 @@ const schema = yup
     password: yup.string().required("Campo incorrecto"),
   })
   .required();
-export default function Login(props) {
-  const {handlerBack} = props;
-  console.log("why time")
-  useEffect(()=> {
-    handlerBack({view: false})
-  },[])
+export default function Login() {
+
   const [userInfo, setUserInfo] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const router = useRouter()
   const dispatch = useDispatch()
-
-  // useEffect(() => {
-  //   (async () => {
-  //     await onAuthStateChanged(auth, (currentUser) => {
-  //       // console.log("auth", auth);
-  //       if (currentUser) {
-          
-  //         dispatch(logins({
-  //           uid: userAuth.uid,
-  //         email: userAuth.email
-  //       }))
-  //       } else {
-  //           dispatch(logouts())
-  //       }
-  //       setUser(currentUser);
-  //     });
-  //   })();
-  // }, [user]);
-
-
   // hookForm
   const {
     register,
@@ -78,25 +59,42 @@ export default function Login(props) {
   } = useForm({ resolver: yupResolver(schema) });
 
   const onSubmit = handleSubmit(async (values) => {
-    let email = values.email;
-    let password = values.password;
-    const credentials = {
-      email: email,
-      password: password,
-    };
+    try{
 
-    try {
-      const res = await axios.post("/api/auth/login", credentials);      
-      console.log("res: ", res)
-      setError(null)
-      if(email === "admin@gmail.com" && password === "superadmin"){
-        router.push({pathname: '/admin', query: {jwt: "pdvwSchhINbT69qmUDNN"}})
+      const res = await axios.post("/api/auth/login", values);      
+      const role = res.data?.role
+      console.log("role", role, res)
+
+      if (res.status === 200) {
+        if (role === "admin") {
+          toast.success(`${res.data.user} un gusto verte de nuevo.` , {
+            position: "bottom-left",
+          });
+          dispatch(login(values));
+          dispatch(addEmail(res.data.user));
+          window.localStorage.setItem("currentUser", JSON.stringify(values));  
+
+          router.push({pathname: '/admin', query: {jwt: "pdvwSchhINbT69qmUDNN"}})
+        }
+        if (role === "user"){ 
+          dispatch(login(values));
+          dispatch(addEmail(res.data.user.email));
+          window.localStorage.setItem("currentUser", JSON.stringify(values));  
+
+          toast.success(`${res.data.user.email} te esperan nuevos productos` , {
+            position: "bottom-left",
+          });
+
+          router.push("/dashboard")
+        }
       }
-      if (res.status === 200) { router.push("/dashboard"); }
-
-    } catch (error) {
-      setError("Hubo un error en el registro")
+    }catch(err){
+              toast.error(`A ocurrido un error intentalo de nuevo.` , {
+                position: "bottom-left",
+              });
     }
+        
+
   });
 
   return (
@@ -104,10 +102,10 @@ export default function Login(props) {
     <div className={stylesProduct.loginCard}>
       <div className={stylesProduct.loginCardContainer}>
         <Card.Img
-          src={imgLogin.src}
-          width="100"
+          src={imgLogin_2.src}
+          width="30"
           height="400"
-          className={stylesProduct.cardImage}
+          className={stylesProduct.cardImageLogin}
         />
         <Card border="secondary" style={{ width: "30rem" }}>
           <Card.Header className="text-center bg-black text-white">
@@ -160,15 +158,14 @@ export default function Login(props) {
                 >
                   Ingresar
                 </Button>
-                {error ? <Typography
+                <Typography
                    variant="caption"
-                   style={{ color: "red" }}
-                   className="ms-2"
+                   style={{ color: "black" }}
+                   className="ms-4 mt-3 text-center"
                  >
-                   Usuario no encontrado 
+                  ¿Aun no tienes cuenta? {" "}
                    <Link href="/signup"> Registrate aqui!</Link>
                  </Typography>
-                : ""}
               </div>
             </form>
           </Card.Body>

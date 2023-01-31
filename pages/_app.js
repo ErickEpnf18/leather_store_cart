@@ -1,21 +1,29 @@
 import "../styles/globals.css";
 import React from "react";
 import Head from "next/head";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 //**********REDUX********** */
-import { useSelector } from "react-redux";
 import { Provider } from "react-redux";
 import store from "../redux/store";
 import { auth } from "firebase-config";
+import { useSelector, useDispatch } from 'react-redux'
+import { fetchUser } from "redux/reducers/authSlice";
+import { fetchKarts } from "redux/reducers/kartsSlice";
+      //////categories/////
+import { fetchCoats } from "redux/reducers/categories/coatsSlice";
+import { fetchDresses } from "redux/reducers/categories/dressesSlice";
+import { fetchFormalShirts } from "redux/reducers/categories/formalshirtsSlice";
+import { fetchJeans } from "redux/reducers/categories/jeansSlice";
+import { fetchMakeUp } from "redux/reducers/categories/makeupSlice";
+import { fetchSportsWear } from "redux/reducers/categories/sportswearSlice";
+import store_redux from "redux/store";
 
 
 import Layout from "components/layout";
 import "node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 function MyApp({ Component, pageProps: {...pageProps } }) {
-  const [data, setData] = React.useState({ view: true });
-  const handlerBack = (e) => {
-    setData(e);
-  };
 
   function AuthIsLoaded({ children }) {
     const auth__ = useSelector((state) => state.user.user);
@@ -39,16 +47,28 @@ function MyApp({ Component, pageProps: {...pageProps } }) {
     return children;
   }
 
+  //////////redux/////////
+  store_redux.dispatch(fetchUser());
+  //store_redux.dispatch(fetchKarts());
+  ////////redux-categories///////
+  store_redux.dispatch(fetchCoats());
+  store_redux.dispatch(fetchDresses());
+  store_redux.dispatch(fetchFormalShirts());
+  store_redux.dispatch(fetchJeans());
+  store_redux.dispatch(fetchMakeUp());
+  store_redux.dispatch(fetchSportsWear());
+  ////////redux-categories///////
   return (
     <Provider store={store}>
-      <Layout data={data}>
+      {/* <Layout data={data}> */}
         <Head>
           <title>Leather Store</title>
         </Head>
           {/* <AuthIsLoaded> */}
-          <Component {...pageProps} handlerBack={handlerBack} data={data} />
+          <Component {...pageProps} />
           {/* </AuthIsLoaded> */}
-      </Layout>
+      {/* </Layout> */}
+      <ToastContainer/>
     </Provider>
   );
 }

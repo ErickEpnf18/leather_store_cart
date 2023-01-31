@@ -24,8 +24,15 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import imgLogin from "imgs/auth/login.jpg";
+import imgLogin_2 from "imgs/auth/leather_store_signup.jpg";
 import { useRouter } from "next/router";
 import { createItem, setNewDoc } from "../../service/api";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { signup } from '../../redux/reducers/authSlice'
+import { useDispatch } from 'react-redux'
+import { addEmail } from '../../redux/reducers/kartsSlice'
+
 
 // schema yup
 const schema = yup
@@ -37,9 +44,7 @@ const schema = yup
     repassword: yup.string().required("Campo incorrecto"),
   })
   .required();
-export default function Login(props) {
-  const {handlerBack} = props;
-  handlerBack({view: false})
+export default function Login() {
   const [userInfo, setUserInfo] = useState({
     username: "",
     name: "",
@@ -50,19 +55,7 @@ export default function Login(props) {
   const [user, setUser] = useState({});
   const [error, setError] = useState("");
   const router = useRouter();
-
-  useEffect(() => {
-    (async () => {
-      await onAuthStateChanged(auth, (currentUser) => {
-        // console.log("auth", auth);
-        if (currentUser) {
-          const uid = user.uid;
-        } else {
-        }
-        setUser(currentUser);
-      });
-    })();
-  }, [user]);
+  const dispatch = useDispatch()
 
   // hookForm
   const {
@@ -75,26 +68,34 @@ export default function Login(props) {
     console.log("values", values);
     (async () => {
       const {name, username, password, repassword, email} = values;
+      setError(null);
       if (password !== repassword) {
         setError("Ingresa correctamente las dos contraseñas");
       } else {
         try {
-          const user = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-          console.log(user);
-          //setError("");
+          const res = await axios.post("/api/auth/signup", values);              
+          sendDataToUsersFireStore(name, username, email, password);
+          const role = res.data?.role
+          console.log("role", role)
+          if (res.status === 200) {
+            dispatch(signup(values));
+            dispatch(addEmail(res.data.user.email));
+            
+            if (role === "user") {router.push("/dashboard")}
+            window.localStorage.setItem("currentUser", JSON.stringify(values));  
 
-          //router.push("/dashboard");
+            toast.success(`${name} bienvenido, te estabamos esperando..` , {
+              position: "bottom-left",
+            });
+          }
         } catch (error) {
+          toast.error(`El usuario ya existe :C intentalo de nuevo.` , {
+            position: "bottom-left",
+          });
           console.log(error.message);
-          setError("Usuario no registrado");
+          setError("El usuario ya existe");
         }
-
         // sendDataFirestore(username, email, password);
-        sendDataToUsersFireStore(name, username, email, password);
       }
     })();
   });
@@ -121,7 +122,7 @@ const sendDataToUsersFireStore = (nm, usernm, email, password) => {
       <div className={stylesProduct.loginCardContainer}>
         {/* <button onClick={handleUpperCase}>send name</button> */}
         <Card.Img
-          src={imgLogin.src}
+          src={imgLogin_2.src}
           width="100"
           height="650"
           className={stylesProduct.cardImage}
@@ -233,11 +234,18 @@ const sendDataToUsersFireStore = (nm, usernm, email, password) => {
                 >
                   Registrarse
                 </Button>
+                <Typography
+                   variant="caption"
+                   style={{ color: "black" }}
+                   className=" text-center"
+                 >
+                   <Link href="/"> Ya tengo una cuenta!</Link>
+                 </Typography>
                 {error ? (
                   <Typography
                     variant="caption"
                     style={{ color: "red" }}
-                    className="ms-2"
+                    className="ms-2 text-center "
                   >
                     {error}
                   </Typography>
@@ -248,8 +256,6 @@ const sendDataToUsersFireStore = (nm, usernm, email, password) => {
             </form>
           </Card.Body>
         </Card>
-        {/* <h4> User Logged In: </h4> */}
-        {/* {user?.email} */}
       </div>
     </div>
   );

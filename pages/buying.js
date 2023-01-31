@@ -10,33 +10,30 @@ import { Box, Chip, Divider, IconButton, Snackbar } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Alert, Stack, Collapse } from "@mui/material";
-import {
-  createItem,
-  getItemsByConditionAll,
-  getUser,
-  setNewDoc,
-  updateItem,
-} from "../service/api";
 import { outputWithSpace } from "utils/";
 import Footer from "components/footer";
 import AppBarStore from "@/components/appbar";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "firebase-config";
 import Link from "next/link";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { addItem } from "../redux/reducers/kartsSlice";
+import axios from "axios";
+import { createSelector } from "@reduxjs/toolkit";
+import Layout from "@/components/layout";
 
-const Buying = (props) => {
-  const { data } = props;
-  console.log("Dtafromodfasd", data);
+const Buying = () => {
   const [product, setProduct] = useState([]);
   const [allData, setAllData] = useState([]);
-  const [lengthData, setLengthData] = useState(2)
+  const [kartItems, setKartItems] = useState(null);
+  const [stateToKard, setStateToKard] = useState(0);
+  const [lengthData, setLengthData] = useState(2);
   const [indexation, setIndexation] = useState();
   const [openAlert, setOpenAlert] = useState(false);
   const [openAlertHeart, setOpenAlertHeart] = useState(false);
 
-  // const [matches, setMatches] = useState(false);
   // const matchesAux = useMediaQuery('(max-width:600px)');
-  // console.log(matchesAux)
   const router = useRouter();
   const { type, keyword, indexSelected } = router.query;
 
@@ -44,6 +41,7 @@ const Buying = (props) => {
     setIndex(selectedIndex);
   };
   const [index, setIndex] = useState(0);
+  const dispatch = useDispatch();
 
   const pro = [
     {
@@ -53,122 +51,154 @@ const Buying = (props) => {
       price: "£99",
     },
   ];
-  const i = allData[0];
+  const karts = useSelector((state) => state.karts);
+  
+  /////NOTMOVE/////
+  const coats = useSelector((state) => state.coats);
+  const dresses = useSelector((state) => state.dresses);
+  const formalshirts = useSelector((state) => state.formalshirts);
+  const jeans = useSelector((state) => state.jeans);
+  const makeup = useSelector((state) => state.makeup);
+  const sportswear = useSelector((state) => state.sportswear);
+  /////NOTMOVE/////
+useEffect(() => {
+  const setKartToFirebase = async () => {
+    
+    if(product.length !== 0 && stateToKard !== 0){
+      console.log("many kart", karts.items)
+
+      const filteritems = karts.items.filter((item)=> typeof(item.cartQuantity) === "number");
+      if(stateToKard !== 0){
+      window.localStorage.setItem("kartItems", JSON.stringify(karts.items));  
+      
+    //let kart__ = JSON.parse(window.localStorage.getItem("kartItems"));
+    let user__ = JSON.parse(window.localStorage.getItem("currentUser"))
+    const res = await axios.post("/api/firebase/kart", {items: filteritems , current_product: product,  user: user__, state: stateToKard});         
+    console.log("res", res.data)     
+   
+    if (res.status !== 200) {
+    toast.error('🦄 Ocurrio un error al añadir el producto!' + err, {
+      position: "bottom-right",
+      autoClose: 1900,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  }
+}
+}
+}
+  console.log("what times", karts)
+  setKartToFirebase()
+},[karts, product, stateToKard])  
+
+useEffect(() => {setKartItems(karts)}, [kartItems, karts])
   useEffect(() => {
     const getProducts = async () => {
+      let data = null;
       if (type) {
-        const allItems = await getItemsByConditionAll(type);
-        // console.log(allItems);
-        // setProduct(allItems[0].data);
-        //get data firebase
-        // const response = await fetch(`/data/men/coats.json`);
-        // const data = await response.json();
-        // setProducts(data);
-        // setFilteredProducts(data);
-        // console.log("data", data);
-        if (allItems[0].data) {
-          // const newItem = allItems[0].data.filter(
-          //   (i) => outputWithSpace(i.title) === keyword
-          // );
-          let dAux = allItems[0].data;
+        if (type === "coats") {
+          data = coats.items[0]?.data.slice();
+          setAllData(data);
+        }
+        if (type === "dresses") {
+          data = dresses.items[0]?.data.slice();
+          setAllData(data);
+        }
+        if (type === "formalshirts") {
+          data = formalshirts.items[0]?.data.slice();
+          setAllData(data);
+        }
+        if (type === "jeans") {
+          data = jeans.items[0]?.data.slice();
+          setAllData(data);
+        }
+        if (type === "makeup") {
+          data = makeup.items[0]?.data.slice();
+          setAllData(data);
+        }
+        if (type === "sportswear") {
+          data = sportswear.items[0]?.data.slice();
+          setAllData(data);
+        }
+        if (data) {
           let indexaux = parseInt(indexSelected);
-          const newItem = dAux.filter((i, index_) => index_ === indexaux);
-          setProduct(...newItem)
-          setAllData(dAux);
-          let leng = dAux.length;
-          setLengthData(leng)
-
-          // num = getRndInteger(dAuz.length, 4);
-          // allDaux.push(Object.assign({}, obj, i, { price: numPrice }));
-          // const newRandomsProds = dAux.setProduct(newItem);
-
-          // const allDaux = dAux.slice(1, rangeProduct.max).map((i) => i);
+          const newItem = data.filter((i, index_) => index_ === indexaux);
+          setProduct(...newItem);
+          let leng = data.length;
+          setLengthData(leng);
         }
       }
-      
-      //
-      //get data firebase
-
-      // catch from _app
-
-      // c
-      // catch from _app
-      // setMatches(matchesAux);
     };
 
     getProducts();
-  }, [keyword, type]);
+  }, [
+    coats.items,
+    dresses.items,
+    formalshirts.items,
+    indexSelected,
+    jeans.items,
+    keyword,
+    makeup.items,
+    sportswear.items,
+    type,
+  ]);
   useEffect(() => {
-    if(allData){
+    if (allData) {
       let leng = allData.length;
       setIndexation({
         i1: getRndInteger(leng, 1),
         i2: getRndInteger(leng, 1),
         i3: getRndInteger(leng, 1),
         i4: getRndInteger(leng, 1),
-      })
-      setLengthData(leng)
+      });
+      setLengthData(leng);
     }
-  },[lengthData, allData])
+  }, [lengthData, allData]);
   function getRndInteger(max, min) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-  console.log("EVERYTHING:", type, keyword, product);
+  //console.log("EVERYTHING:", type, keyword, product);
   const handleAlert = async () => {
     setOpenAlert(true);
-    handlePushProductCart();
-    console.log(product);
+    handlePushProductCart(karts, product);
+    
     await setTimeout(() => {
-      // After 3 seconds set the show value to false
+      // miliseconds set the show value to false
       setOpenAlert(false);
-    }, 2000);
+    }, 1900);
   };
   const handleAlertHeart = async () => {
     setOpenAlertHeart(true);
     handlePushProductFavorites();
     await setTimeout(() => {
-      // After 3 seconds set the show value to false
+      // miliseconds set the show value to false
       setOpenAlertHeart(false);
-    }, 2000);
+    }, 1900);
   };
-  const handlePushProductCart = async () => {
-    //     let nameUserEmail = "";
-    //     await onAuthStateChanged(auth, (currentUser) => {
-    //       nameUserEmail = currentUser.email;
-    //       console.log(currentUser);
-    //     });
-    //     const users = await getUser("users");
-    //     const user = users.filter((i) => i.email === nameUserEmail);
-    //     console.log(user, "user");
-    //     let id_ ={ id: user[0].id};
-    //     let obj = { ...product[0], ...id_ };
-    //     const item = await getUser("carts");
-    //     let isValue = item.filter((i) => i.id === user[0].email);
-    //     delete isValue[0].id;
-    //     console.log("isValue", isValue)
-    //     let testing = {}
-    // let arr = []
-    //     if (isValue.length === 0) {
-    //       arr.push(obj)
-    //       console.log("arr0", arr)
-    //       // updateItem(user[0].id, {...obj}, "carts")
-    //       setNewDoc(user[0].email, {...arr}, "carts");
-    //       // console.log("new");
-    //     } else {
-    //       arr.push(obj, ...isValue)
-    //       console.log("arr1", arr)
-    //       updateItem(user[0].email, {...arr}, "carts")
-    //   }
-    // const itemsReNew = await getUser("carts")
-    // console.log("here")
-    // itemsReNew.forEach((i, index) =>{
-    //   console.log(i.title)
-    // })
+  const handlePushProductCart = async (_kart, _product) => {
+    dispatch(addItem(product));
+    setStateToKard(Math.random() + 1)
   };
   const handlePushProductFavorites = async () => {};
-
+  const handleChangeProduct = (title) => {
+    toast(`${title.substring(0, 15)}.. es buena elección🦄`, {
+      position: "bottom-right",
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
   return (
     <>
+    <Layout>
       <Container className={styles.overalContainer}>
         <Row>
           <Col xs={12} sm={6} md={6} className="d-flex justify-content-center">
@@ -203,10 +233,10 @@ const Buying = (props) => {
                   </Card.Header>
                   <Card.Body>
                     <Card.Title>
-                      <span className={styles.textPrice}>${i.price}</span>{" "}
+                      <span className={styles.textPrice}>${product.price}</span>{" "}
                       &nbsp;
                       <span style={{ color: "red" }}>
-                        ${i.price - i.discount}
+                        ${product.price - product.discount}
                       </span>
                     </Card.Title>
                     <Card.Subtitle className="mb-2 text-muted text-center">
@@ -448,271 +478,306 @@ const Buying = (props) => {
 
                     <Carousel.Item>
                       <Row className={styles.carrouselOverlay}>
-                        {allData
-                          .filter((i, index) => index === indexation.i1)
-                          .map((i, index) => (
-                            <Col
-                              key={index}
-                              xs={12}
-                              sm={4}
-                              md={3}
-                              className={styles.colcarrouselItem}
-                            >
-                              <Link
-                                href={{
-                                  pathname: "/buying",
-                                  query: {
-                                    keyword: outputWithSpace(i.title),
-                                    type: type,
-                                    indexSelected: parseInt(indexation.i1),
-                                  },
-                                }}
-                              >
-                                <Card
-                                  style={{ width: "18rem" }}
-                                  className={styles.container_card}
+                        {typeof allData !== "undefined"
+                          ? allData
+                              .filter((i, index) => index === indexation.i1)
+                              .map((i, index) => (
+                                <Col
+                                  key={index}
+                                  xs={12}
+                                  sm={4}
+                                  md={3}
+                                  className={styles.colcarrouselItem}
                                 >
-                                  <Card.Img
-                                    variant="top"
-                                    src={i.image}
-                                    width={80}
-                                    height={300}
-                                  ></Card.Img>
-                                  <Card.Body className={styles.cardBody}>
-                                    <Card.Text className={styles.cardText}>
-                                      {/* Añadir al Carrito */}
-                                      Pincha aqui
-                                      <p>S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL</p>
-                                    </Card.Text>
-                                    <Card.Text className={styles.cardTextTitle}>
-                                      {i.title}
-                                    </Card.Text>
-                                    <Card.Title>
-                                      <span className={styles.textPrice}>
-                                        ${i.price}
-                                      </span>{" "}
-                                      &nbsp;
-                                      <span style={{ color: "red" }}>
-                                        ${i.price - i.discount}
-                                      </span>
-                                    </Card.Title>
-                                  </Card.Body>
-                                </Card>
-                              </Link>
-                            </Col>
-                          ))}
-                        {allData
-                          .filter((i, index) => index === indexation.i2)
-                          .map((i, index) => (
-                            <Col
-                              key={index}
-                              xs={12}
-                              sm={4}
-                              md={3}
-                              className={styles.colcarrouselItem}
-                            >
-                              <Link
-                                href={{
-                                  pathname: "/buying",
-                                  query: {
-                                    keyword: outputWithSpace(i.title),
-                                    type: type,
-                                    indexSelected: parseInt(indexation.i2),
-                                  },
-                                }}
-                              >
-                                <Card
-                                  style={{ width: "18rem" }}
-                                  className={styles.container_card}
+                                  <Link
+                                    onClick={() => handleChangeProduct(i.title)}
+                                    href={{
+                                      pathname: "/buying",
+                                      query: {
+                                        keyword: outputWithSpace(i.title),
+                                        type: type,
+                                        indexSelected: parseInt(indexation.i1),
+                                      },
+                                    }}
+                                  >
+                                    <Card
+                                      style={{ width: "18rem" }}
+                                      className={styles.container_card}
+                                    >
+                                      <Card.Img
+                                        variant="top"
+                                        src={i.image}
+                                        width={80}
+                                        height={300}
+                                      ></Card.Img>
+                                      <Card.Body className={styles.cardBody}>
+                                        <Card.Text className={styles.cardText}>
+                                          {/* Añadir al Carrito */}
+                                          Pincha aqui
+                                          <p>
+                                            S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL
+                                          </p>
+                                        </Card.Text>
+                                        <Card.Text
+                                          className={styles.cardTextTitle}
+                                        >
+                                          {i.title}
+                                        </Card.Text>
+                                        <Card.Title>
+                                          <span className={styles.textPrice}>
+                                            ${i.price}
+                                          </span>{" "}
+                                          &nbsp;
+                                          <span style={{ color: "red" }}>
+                                            ${i.price - i.discount}
+                                          </span>
+                                        </Card.Title>
+                                      </Card.Body>
+                                    </Card>
+                                  </Link>
+                                </Col>
+                              ))
+                          : "Loading..."}
+                        {typeof allData !== "undefined"
+                          ? allData
+                              .filter((i, index) => index === indexation.i2)
+                              .map((i, index) => (
+                                <Col
+                                  key={index}
+                                  xs={12}
+                                  sm={4}
+                                  md={3}
+                                  className={styles.colcarrouselItem}
                                 >
-                                  <Card.Img
-                                    variant="top"
-                                    src={i.image}
-                                    width={80}
-                                    height={300}
-                                  ></Card.Img>
-                                  <Card.Body className={styles.cardBody}>
-                                    <Card.Text className={styles.cardText}>
-                                      {/* Añadir al Carrito */}
-                                      Pincha aqui
-                                      <p>S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL</p>
-                                    </Card.Text>
-                                    <Card.Text className={styles.cardTextTitle}>
-                                      {i.title}
-                                    </Card.Text>
-                                    <Card.Title>
-                                      <span className={styles.textPrice}>
-                                        ${i.price}
-                                      </span>{" "}
-                                      &nbsp;
-                                      <span style={{ color: "red" }}>
-                                        ${i.price - i.discount}
-                                      </span>
-                                    </Card.Title>
-                                  </Card.Body>
-                                </Card>
-                              </Link>
-                            </Col>
-                          ))}
-                        {allData
-                          .filter((i, index) => index === indexation.i3)
-                          .map((i, index) => (
-                            <Col
-                              key={index}
-                              xs={12}
-                              sm={4}
-                              md={3}
-                              className={styles.colcarrouselItem}
-                            >
-                              <Link
-                                href={{
-                                  pathname: "/buying",
-                                  query: {
-                                    keyword: outputWithSpace(i.title),
-                                    type: type,
-                                    indexSelected: parseInt(indexation.i3),
-                                  },
-                                }}
-                              >
-                                <Card
-                                  style={{ width: "18rem" }}
-                                  className={styles.container_card}
+                                  <Link
+                                    onClick={() => handleChangeProduct(i.title)}
+                                    href={{
+                                      pathname: "/buying",
+                                      query: {
+                                        keyword: outputWithSpace(i.title),
+                                        type: type,
+                                        indexSelected: parseInt(indexation.i2),
+                                      },
+                                    }}
+                                  >
+                                    <Card
+                                      style={{ width: "18rem" }}
+                                      className={styles.container_card}
+                                    >
+                                      <Card.Img
+                                        variant="top"
+                                        src={i.image}
+                                        width={80}
+                                        height={300}
+                                      ></Card.Img>
+                                      <Card.Body className={styles.cardBody}>
+                                        <Card.Text className={styles.cardText}>
+                                          {/* Añadir al Carrito */}
+                                          Pincha aqui
+                                          <p>
+                                            S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL
+                                          </p>
+                                        </Card.Text>
+                                        <Card.Text
+                                          className={styles.cardTextTitle}
+                                        >
+                                          {i.title}
+                                        </Card.Text>
+                                        <Card.Title>
+                                          <span className={styles.textPrice}>
+                                            ${i.price}
+                                          </span>{" "}
+                                          &nbsp;
+                                          <span style={{ color: "red" }}>
+                                            ${i.price - i.discount}
+                                          </span>
+                                        </Card.Title>
+                                      </Card.Body>
+                                    </Card>
+                                  </Link>
+                                </Col>
+                              ))
+                          : "Loading..."}
+                        {typeof allData !== "undefined"
+                          ? allData
+                              .filter((i, index) => index === indexation.i3)
+                              .map((i, index) => (
+                                <Col
+                                  key={index}
+                                  xs={12}
+                                  sm={4}
+                                  md={3}
+                                  className={styles.colcarrouselItem}
                                 >
-                                  <Card.Img
-                                    variant="top"
-                                    src={i.image}
-                                    width={80}
-                                    height={300}
-                                  ></Card.Img>
-                                  <Card.Body className={styles.cardBody}>
-                                    <Card.Text className={styles.cardText}>
-                                      {/* Añadir al Carrito */}
-                                      Pincha aqui
-                                      <p>S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL</p>
-                                    </Card.Text>
-                                    <Card.Text className={styles.cardTextTitle}>
-                                      {i.title}
-                                    </Card.Text>
-                                    <Card.Title>
-                                      <span className={styles.textPrice}>
-                                        ${i.price}
-                                      </span>{" "}
-                                      &nbsp;
-                                      <span style={{ color: "red" }}>
-                                        ${i.price - i.discount}
-                                      </span>
-                                    </Card.Title>
-                                  </Card.Body>
-                                </Card>
-                              </Link>
-                            </Col>
-                          ))}
-                        {allData
-                          .filter((i, index) => index === indexation.i4)
-                          .map((i, index) => (
-                            <Col
-                              key={index}
-                              xs={12}
-                              sm={4}
-                              md={3}
-                              className={styles.colcarrouselItem}
-                            >
-                              <Link
-                                href={{
-                                  pathname: "/buying",
-                                  query: {
-                                    keyword: outputWithSpace(i.title),
-                                    type: type,
-                                    indexSelected: parseInt(indexation.i4),
-                                  },
-                                }}
-                              >
-                                <Card
-                                  style={{ width: "18rem" }}
-                                  className={styles.container_card}
+                                  <Link
+                                    onClick={() => handleChangeProduct(i.title)}
+                                    href={{
+                                      pathname: "/buying",
+                                      query: {
+                                        keyword: outputWithSpace(i.title),
+                                        type: type,
+                                        indexSelected: parseInt(indexation.i3),
+                                      },
+                                    }}
+                                  >
+                                    <Card
+                                      style={{ width: "18rem" }}
+                                      className={styles.container_card}
+                                    >
+                                      <Card.Img
+                                        variant="top"
+                                        src={i.image}
+                                        width={80}
+                                        height={300}
+                                      ></Card.Img>
+                                      <Card.Body className={styles.cardBody}>
+                                        <Card.Text className={styles.cardText}>
+                                          {/* Añadir al Carrito */}
+                                          Pincha aqui
+                                          <p>
+                                            S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL
+                                          </p>
+                                        </Card.Text>
+                                        <Card.Text
+                                          className={styles.cardTextTitle}
+                                        >
+                                          {i.title}
+                                        </Card.Text>
+                                        <Card.Title>
+                                          <span className={styles.textPrice}>
+                                            ${i.price}
+                                          </span>{" "}
+                                          &nbsp;
+                                          <span style={{ color: "red" }}>
+                                            ${i.price - i.discount}
+                                          </span>
+                                        </Card.Title>
+                                      </Card.Body>
+                                    </Card>
+                                  </Link>
+                                </Col>
+                              ))
+                          : "Loading..."}
+                        {typeof allData !== "undefined"
+                          ? allData
+                              .filter((i, index) => index === indexation.i4)
+                              .map((i, index) => (
+                                <Col
+                                  key={index}
+                                  xs={12}
+                                  sm={4}
+                                  md={3}
+                                  className={styles.colcarrouselItem}
                                 >
-                                  <Card.Img
-                                    variant="top"
-                                    src={i.image}
-                                    width={80}
-                                    height={300}
-                                  ></Card.Img>
-                                  <Card.Body className={styles.cardBody}>
-                                    <Card.Text className={styles.cardText}>
-                                      {/* Añadir al Carrito */}
-                                      Pincha aqui
-                                      <p>S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL</p>
-                                    </Card.Text>
-                                    <Card.Text className={styles.cardTextTitle}>
-                                      {i.title}
-                                    </Card.Text>
-                                    <Card.Title>
-                                      <span className={styles.textPrice}>
-                                        ${i.price}
-                                      </span>{" "}
-                                      &nbsp;
-                                      <span style={{ color: "red" }}>
-                                        ${i.price - i.discount}
-                                      </span>
-                                    </Card.Title>
-                                  </Card.Body>
-                                </Card>
-                              </Link>
-                            </Col>
-                          ))}
-                        {allData
-                          .filter((i, index) => index === indexation.i1)
-                          .map((i, index) => (
-                            <Col
-                              key={index}
-                              xs={12}
-                              sm={4}
-                              md={3}
-                              className={styles.colcarrouselItem}
-                            >
-                              <Link
-                                href={{
-                                  pathname: "/buying",
-                                  query: {
-                                    keyword: outputWithSpace(i.title),
-                                    type: type,
-                                    indexSelected: parseInt(indexation.i1),
-                                  },
-                                }}
-                              >
-                                <Card
-                                  style={{ width: "18rem" }}
-                                  className={styles.container_card}
+                                  <Link
+                                    onClick={() => handleChangeProduct(i.title)}
+                                    href={{
+                                      pathname: "/buying",
+                                      query: {
+                                        keyword: outputWithSpace(i.title),
+                                        type: type,
+                                        indexSelected: parseInt(indexation.i4),
+                                      },
+                                    }}
+                                  >
+                                    <Card
+                                      style={{ width: "18rem" }}
+                                      className={styles.container_card}
+                                    >
+                                      <Card.Img
+                                        variant="top"
+                                        src={i.image}
+                                        width={80}
+                                        height={300}
+                                      ></Card.Img>
+                                      <Card.Body className={styles.cardBody}>
+                                        <Card.Text className={styles.cardText}>
+                                          {/* Añadir al Carrito */}
+                                          Pincha aqui
+                                          <p>
+                                            S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL
+                                          </p>
+                                        </Card.Text>
+                                        <Card.Text
+                                          className={styles.cardTextTitle}
+                                        >
+                                          {i.title}
+                                        </Card.Text>
+                                        <Card.Title>
+                                          <span className={styles.textPrice}>
+                                            ${i.price}
+                                          </span>{" "}
+                                          &nbsp;
+                                          <span style={{ color: "red" }}>
+                                            ${i.price - i.discount}
+                                          </span>
+                                        </Card.Title>
+                                      </Card.Body>
+                                    </Card>
+                                  </Link>
+                                </Col>
+                              ))
+                          : "Loading..."}
+                        {typeof allData !== "undefined"
+                          ? allData
+                              .filter((i, index) => index === indexation.i1)
+                              .map((i, index) => (
+                                <Col
+                                  key={index}
+                                  xs={12}
+                                  sm={4}
+                                  md={3}
+                                  className={styles.colcarrouselItem}
                                 >
-                                  <Card.Img
-                                    variant="top"
-                                    src={i.image}
-                                    width={80}
-                                    height={300}
-                                  ></Card.Img>
-                                  <Card.Body className={styles.cardBody}>
-                                    <Card.Text className={styles.cardText}>
-                                      {/* Añadir al Carrito */}
-                                      Pincha aqui
-                                      <p>S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL</p>
-                                    </Card.Text>
-                                    <Card.Text className={styles.cardTextTitle}>
-                                      {i.title}
-                                    </Card.Text>
-                                    <Card.Title>
-                                      <span className={styles.textPrice}>
-                                        ${i.price}
-                                      </span>{" "}
-                                      &nbsp;
-                                      <span style={{ color: "red" }}>
-                                        ${i.price - i.discount}
-                                      </span>
-                                    </Card.Title>
-                                  </Card.Body>
-                                </Card>
-                              </Link>
-                            </Col>
-                          ))}
+                                  <Link
+                                    onClick={() => handleChangeProduct(i.title)}
+                                    href={{
+                                      pathname: "/buying",
+                                      query: {
+                                        keyword: outputWithSpace(i.title),
+                                        type: type,
+                                        indexSelected: parseInt(indexation.i1),
+                                      },
+                                    }}
+                                  >
+                                    <Card
+                                      style={{ width: "18rem" }}
+                                      className={styles.container_card}
+                                    >
+                                      <Card.Img
+                                        variant="top"
+                                        src={i.image}
+                                        width={80}
+                                        height={300}
+                                      ></Card.Img>
+                                      <Card.Body className={styles.cardBody}>
+                                        <Card.Text className={styles.cardText}>
+                                          {/* Añadir al Carrito */}
+                                          Pincha aqui
+                                          <p>
+                                            S&nbsp;X&nbsp;L&nbsp;XL&nbsp;XLL
+                                          </p>
+                                        </Card.Text>
+                                        <Card.Text
+                                          className={styles.cardTextTitle}
+                                        >
+                                          {i.title}
+                                        </Card.Text>
+                                        <Card.Title>
+                                          <span className={styles.textPrice}>
+                                            ${i.price}
+                                          </span>{" "}
+                                          &nbsp;
+                                          <span style={{ color: "red" }}>
+                                            ${i.price - i.discount}
+                                          </span>
+                                        </Card.Title>
+                                      </Card.Body>
+                                    </Card>
+                                  </Link>
+                                </Col>
+                              ))
+                          : "Loading..."}
 
                         {/* <Col
                           xs={12}
@@ -969,6 +1034,7 @@ const Buying = (props) => {
           </Col>
         </Row>
       </Container>
+      </Layout>
     </>
   );
 };

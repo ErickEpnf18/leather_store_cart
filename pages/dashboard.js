@@ -16,14 +16,33 @@ const imageCoat =
   "https://xcdn.next.co.uk/Common/Items/Default/Default/ItemImages/Search/224x336/525517.jpg?X56";
 const image33 =
   "https://xcdn.next.co.uk/Common/Items/Default/Default/ItemImages/Search/224x336/L26457.jpg?X56";
+import { useSelector, useDispatch } from 'react-redux'
+import Layout from "@/components/layout";
 
-const Home = (props) => {
-  const {handlerBack} = props;
-  useEffect(()=> {
-    handlerBack({view: true})
-  },[])
+
+const Home = () => {
+  const data_auth = useSelector((state) => state.auth);
+  const karts = useSelector((state) => state.karts);
+  const coats = useSelector((state) => state.coats);
+  const dresses = useSelector((state) => state.dresses);
+  const formalshirts = useSelector((state) => state.formalshirts);
+  const jeans = useSelector((state) => state.jeans);
+  const makeup = useSelector((state) => state.makeup);
+  const sportswear = useSelector((state) => state.sportswear);
+  // console.log("data_auth", data_auth)
+  // console.log("karts", karts)
+  // console.log("coats", coats)
+  // console.log("dresses", dresses)
+  // console.log("formalshirts", formalshirts)
+  // console.log("jeans", jeans)
+  // console.log("makeup", makeup)
+  // console.log("sportswear", sportswear)
+  
+
   return (
     <>
+    <Layout>
+
       <Carrousel />
       <Grid container spacing={2} s className={styles.container}>
         <div className={styles.container_title}>
@@ -171,6 +190,7 @@ const Home = (props) => {
       </Grid>
       <Divider />
       <Grid container></Grid>
+    </Layout>
     </>
   );
 };

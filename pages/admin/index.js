@@ -46,12 +46,17 @@ function createData(name, price, discount, stock, size, amount) {
     history: [
       {
         date: new Date().toLocaleString(),
-        customerId: "Jhosef Rea",
+        customerId: "Eddison Fuentes",
         amount: 3,
       },
       {
         date: new Date().toLocaleString(),
-        customerId: "Anonymous",
+        customerId: "Marco Carrera",
+        amount: 3,
+      },
+      {
+        date: new Date().toLocaleString(),
+        customerId: "Maria Cifuentes",
         amount: 1,
       },
     ],
@@ -203,11 +208,7 @@ const rows = [
   createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5),
 ];
 
-export default function Admin(props) {
-  const {handlerBack} = props;
-  useEffect(()=> {
-    handlerBack({view: false})
-  },[])
+export default function Admin() {
   const [rows, setRows] = useState([]);
   const [nameCol, setNameCol] = useState({ category: "women", type: "jeans" });
   const [openDialog, setOpenDialog] = React.useState(false);

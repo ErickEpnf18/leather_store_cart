@@ -10,7 +10,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
-import DialogFormInvoice from "components/dialogFormInvoice";
+import DialogFormInvoice from "components/dialogFormInvoice_inv";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import {
   Collapse,
@@ -26,7 +26,7 @@ import {
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { getItemsByConditionAll } from "service/api";
+import { getItems, getItemsByConditionAll } from "service/api";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import style from "./Drawer.module.css";
 
@@ -55,12 +55,26 @@ const Puller = styled(Box)(({ theme }) => ({
 }));
 
 function SwipeableEdgeDrawer(props) {
-  const { window, toggleDrawer, open } = props;
+  const { window, toggleDrawer, open, data } = props;
+  // useEffect(() => {
+  //   const getDataUser = async() => {
+  //       let user__ = JSON.parse(window?.localStorage.getItem("currentUser"));
+  //       const getDataUser = await getItems("users")
+  //       const current_user = getDataUser.filter(items => items.email === user__.email)
+  //       console.log(current_user)
+  //       setDataUser(current_user)
+
+  //   }
+  //   getDataUser();
+  // }, []) 
   //   const [open, setOpen] = React.useState(true);
   //table
   const [rows, setRows] = useState([]);
+  const [dataAux, setDataAux] = useState(null);
   const [array, setArray] = useState(null);
   const [openDialogForm, setOpenDialogForm] = useState(false);
+  const [lengthKart, setLengthKart] = useState(0);
+
 
   useEffect(() => {
     const getProducts = async () => {
@@ -73,24 +87,41 @@ function SwipeableEdgeDrawer(props) {
       // const response = await fetch(`/data/men/jackets.json`);
       // const data = await response.json();
       // console.log("data", allItems[0].data);
-      if (allItems[0].data) {
-        // name,
-        // price,
-        // discount,
-        // stock,
-        // size,
-        // amount,
-        const newItems = allItems[0].data.map((item) =>
+      // if (allItems[0].data) {
+      console.log("data", data)
+      if (data) {
+        // name,// price,// discount,// stock,// size,// amount,
+
+        const newItems = data[0].items?.map((item) =>
           createData(item.title, item.price, 159, 6.0, 24, 4.0, 3.99)
         );
         // console.log("ultra data: ", newItems);
-        const array = newItems.filter((i, index) => index < 15);
+        const array = newItems?.filter((i, index) => index < 15);
         setArray(array)
         setRows(newItems);
+        setLengthKart(newItems?.length)
+
+        // kart
+        if(window !== undefined) {
+          let kart__ = JSON.parse(window.localStorage.getItem("kartItems"));
+          const newItems__ = kart__[0]?.items?.map((item) =>
+          createData(item.title, item.price, 159, 6.0, 24, 4.0, 3.99)
+        );
+        // console.log("ultra data: ", newItems);
+          setLengthKart(newItems?.length)
+          setDataAux(newItems_)
+
+        }
+
       }
     };
+    if(data?.length === 0){
+      let aux = JSON.parse(window.localStorage.getItem("kartItems"))
+      setDataAux(aux)
+      setLengthKart(aux.length)
+    }
     getProducts();
-  }, []);
+  }, [data, window]);
   //table
 
   // This is used only for the example
@@ -152,7 +183,8 @@ function SwipeableEdgeDrawer(props) {
           >
             <Puller />
             <Typography sx={{ p: 2, color: "text.secondary" }}>
-              {array ? array.length: "?"} resultados en el carrito
+              {/* {array ? array.length: "?"} resultados en el carrito */}
+              {lengthKart} resultados en el carrito
             </Typography>
             <Container className={style.containerGenerateInvoice}>
               <Button
@@ -201,6 +233,7 @@ SwipeableEdgeDrawer.propTypes = {
   window: PropTypes.func,
   toggleDrawer: PropTypes.func,
   open: PropTypes.bool,
+  data: PropTypes.array,
 };
 
 // table

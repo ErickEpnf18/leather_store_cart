@@ -27,11 +27,7 @@ const schema = yup
       .max(9999999999, "Ejemplo de 1795285157."),
     city: yup.string().required("Campo incorrecto"),
     location: yup.string().required("Campo incorrecto"),
-    phone: yup
-      .number()
-      .typeError("Especifique un número")
-      .min(1000000000, "Mínimo valor 1000000000.")
-      .max(9999999999, "Valor máximo de 9999999999."),
+    phone: yup.string().required("Campo incorrecto"),
   })
   .required();
 
@@ -183,8 +179,8 @@ export default function FormDialog({ open, handlerOpen, data }) {
           <TextField
             margin="dense"
             id="stock"
-            label={` Dirección de domicilio${userInfo.phone}`}
-            type="number"
+            label={` Dirección de domicilio`}
+            type="text"
             fullWidth
             variant="standard"
             // value={data.size}

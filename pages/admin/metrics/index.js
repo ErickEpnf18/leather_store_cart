@@ -7,7 +7,9 @@ import PieChart from "components/metrics/PieChart";
 import { UserData } from "components/metrics/data/Data";
 import { Line } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
-import { Grid } from "@mui/material";
+import { Grid, MenuItem, Select, Typography } from "@mui/material";
+import { styled } from '@mui/material/styles';
+
 
 export const options = {
   responsive: true,
@@ -60,7 +62,9 @@ export const data1 = {
       fill: true,
       type: "line",
       label: "Camisas Formales",
-      data: labels.splice(0,3).map(() => faker.datatype.number({ min: 0, max: 1000 })),
+      data: labels
+        .splice(0, 3)
+        .map(() => faker.datatype.number({ min: 0, max: 1000 })),
       borderColor: "rgb(53, 162, 235)",
       backgroundColor: "rgba(53, 162, 235, 0.5)",
     },
@@ -68,7 +72,9 @@ export const data1 = {
       fill: true,
       type: "line",
       label: "Vestidos",
-      data: labels.splice(0,3).map(() => faker.datatype.number({ min: 0, max: 1000 })),
+      data: labels
+        .splice(0, 3)
+        .map(() => faker.datatype.number({ min: 0, max: 1000 })),
       borderColor: "rgba(75,192,192,1)",
       backgroundColor: "rgba(75,192,192,1)",
     },
@@ -76,10 +82,6 @@ export const data1 = {
 };
 
 function App(props) {
-  const {handlerBack} = props;
-  useEffect(()=> {
-    handlerBack({view: false})
-  },[])
   const [userData, setUserData] = useState({
     labels: UserData.map((data) => data.year),
     datasets: [
@@ -101,7 +103,7 @@ function App(props) {
     ],
   });
   const [userData1, setUserData1] = useState({
-    labels: UserData.splice(0,4).map((data) => data.year),
+    labels: UserData.splice(0, 4).map((data) => data.year),
     datasets: [
       {
         label: "Users Gained",
@@ -121,13 +123,36 @@ function App(props) {
     ],
   });
 
-  // IF YOU SEE THIS COMMENT: I HAVE GOOD EYESIGHT
+  const [way, setWay] = useState("");
+
+  const handleChange = (event) => {
+    setWay(event.target.value);
+  };
 
   return (
     <>
       <NavBarAdmin />
 
-      <div className="App">
+      <div style={{ width: "100%",textAlign: "center"}}>
+      <Typography variant="h6" gutterBottom>
+        Escoge un grafico
+      </Typography>
+      <Select
+        labelId="demo-simple-select-standard-label"
+        id="demo-simple-select-standard"
+        value={way}
+        onChange={handleChange}
+        label="Grafico"
+      >
+        <MenuItem value="">
+          <em>Escoge un grafico</em>
+        </MenuItem>
+        <MenuItem value={"line"}>Lineal</MenuItem>
+        <MenuItem value={"bar"}>Barras</MenuItem>
+        <MenuItem value={"cube"}>Cuadricular</MenuItem>
+        <MenuItem value={"circle"}>Redondo</MenuItem>
+        <MenuItem value={"all"}>Todos</MenuItem>
+      </Select>
         <Grid
           container
           columns={{ xs: 12, sm: 12, md: 12, lg: 12 }} //for default is 12 but not working when you moved
@@ -135,18 +160,46 @@ function App(props) {
           columnSpacing={{ xs: 0, sm: 0, md: 5 }}
           rowSpacing={{ xs: 3, sm: 3, md: 0 }}
         >
-          <Grid item xs={12} sm={12} md={6} lg={4}>
-            <Line options={options} data={data} />
-          </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={4}>
-            <BarChart options={options} chartData={userData} />
-          </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={4}>
-            <LineChart chartData={userData} options={options} />
-          </Grid>
-          <Grid item xs={12} sm={12} md={6} lg={4}>
-            <PieChart chartData={userData1} options={options} />
-          </Grid>
+          {way === "line" && (
+            <Grid item xs={12} sm={12} md={6} lg={4}>
+              <Line options={options} data={data} />
+            </Grid>
+          )}
+
+          {way === "bar" && (
+            <Grid item xs={12} sm={12} md={6} lg={4}>
+              <BarChart options={options} chartData={userData} />
+            </Grid>
+          )}
+
+          {way === "cube" && (
+            <Grid item xs={12} sm={12} md={6} lg={4}>
+              <LineChart chartData={userData} options={options} />
+            </Grid>
+          )}
+
+          {way === "circle" && (
+            <Grid item xs={12} sm={12} md={6} lg={4}>
+              <PieChart chartData={userData1} options={options} />
+            </Grid>
+          )}
+
+          {way === "all" && (
+            <>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
+                <Line options={options} data={data} />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
+                <BarChart options={options} chartData={userData} />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
+                <LineChart chartData={userData} options={options} />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={4}>
+                <PieChart chartData={userData1} options={options} />
+              </Grid>
+            </>
+          )}
         </Grid>
         {/* <div style={{ width: 700 }}>
       <Line
