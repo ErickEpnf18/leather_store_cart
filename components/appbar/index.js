@@ -131,7 +131,6 @@ export default function AppBarStore() {
         handleMenuClose();
         break;
         default:
-          console.log("nothing")
     }
 
   }
@@ -179,14 +178,17 @@ export default function AppBarStore() {
         vertical: "top",
         horizontal: "right",
       }}
+      
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={() => {handleMenuClose();
+      <MenuItem id="id_btn_my_account"
+onClick={() => {handleMenuClose();
        router.push({pathname: '/profile'}) 
       
       }}>Mi Cuenta</MenuItem>
-      <MenuItem onClick={() => {handleMenuClose();
+      <MenuItem           id="id_btn_profile_logout"
+onClick={() => {handleMenuClose();
       signOut(auth).then( async () => {
         console.log('Successful logout');
         await axios.post("/api/auth/logout");
@@ -216,7 +218,7 @@ export default function AppBarStore() {
       open={isMenuOpenMale}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={()=> {handleMenuClose();
+      <MenuItem id="id_btn_coats"    onClick={()=> {handleMenuClose();
       router.push({pathname: '/categories', query: {gender: "men", type: "coats"}}) 
       }}>
         <IconButton
@@ -228,7 +230,7 @@ export default function AppBarStore() {
         </IconButton>
         Abrigos y Chaquetas
       </MenuItem>
-      <MenuItem onClick={()=> {handleMenuClose();
+      <MenuItem id="id_btn_formal_shirts" onClick={()=> {handleMenuClose();
       router.push({pathname: '/categories', query: {gender: "men", type: "formal_shirts"}}) 
       }}>
         <IconButton
@@ -240,7 +242,7 @@ export default function AppBarStore() {
         </IconButton>
         Camisas Formales
       </MenuItem>
-      <MenuItem onClick={()=> {handleMenuClose();
+      <MenuItem id="id_btn_sportwear" onClick={()=> {handleMenuClose();
       router.push({pathname: '/categories', query: {gender: "men", type: "sportswear"}}) 
       }}>
         <IconButton
@@ -259,19 +261,19 @@ export default function AppBarStore() {
     <Menu
       anchorEl={anchorElFemale}
       anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
+        vertical: "bottom",
+        horizontal: "left",
       }}
       id={menuId}
-      keepMounted
+      
       transformOrigin={{
         vertical: "top",
-        horizontal: "right",
+        horizontal: "left",
       }}
       open={isMenuOpenFemale}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={()=> {handleMenuClose();
+      <MenuItem id="id_btn_dresses" onClick={()=> {handleMenuClose();
       router.push({pathname: '/categories', query: {gender: "women", type: "dresses"}}) 
       }}>
         <IconButton
@@ -283,7 +285,7 @@ export default function AppBarStore() {
         </IconButton>
         <p>Vestidos</p>
       </MenuItem>
-      <MenuItem onClick={()=> {handleMenuClose();
+      <MenuItem id="id_btn_jeans" onClick={()=> {handleMenuClose();
       router.push({pathname: '/categories', query: {gender: "women", type: "jeans"}}) 
       }}>
         <IconButton
@@ -295,7 +297,7 @@ export default function AppBarStore() {
         </IconButton>
         Jeans de Mujer
       </MenuItem>
-      <MenuItem onClick={()=> {handleMenuClose();
+      <MenuItem id="id_btn_makeup"onClick={()=> {handleMenuClose();
       router.push({pathname: '/categories', query: {gender: "women", type: "makeup"}}) 
       }}>
         <IconButton
@@ -337,7 +339,8 @@ export default function AppBarStore() {
         </IconButton>
         <p>Favoritos</p>
       </MenuItem> */}
-      <MenuItem   onClick={() =>handleDrawer("cart")}>
+      <MenuItem            id="id_btn_kart_mobile"
+ onClick={() =>handleDrawer("cart")}>
         <IconButton
           size="large"
           aria-label="show car"
@@ -352,7 +355,10 @@ export default function AppBarStore() {
         </IconButton>
         <p>Carrito</p>
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem  
+        id="id_btn_profile_mobile"
+        onClick={handleProfileMenuOpen}>
+        
         <IconButton
           size="large"
           aria-label="account of current user"
@@ -412,10 +418,12 @@ const toggleDrawer = (newOpen) => () => {
       <AppBar position="static">
         <Toolbar>
           <IconButton
+            id="id_btn_hamburguer"
             size="large"
             edge="start"
             color="inherit"
             aria-label="open drawer"
+            onMouseOver={(e) => handleMobileMenuOpen(e, "left")}
             onClick={(e) => handleMobileMenuOpen(e, "left")}
             sx={{ display: { xs: "block", md: "none" }, mr: 2 }}
           >
@@ -423,13 +431,14 @@ const toggleDrawer = (newOpen) => () => {
           </IconButton>
 
           <Link
+                id="id_btn_return_dashboard"
                 href={{
                   pathname: "/dashboard",
                 }}
                 style={{cursor:"pointer"}}
               >
                 <div className={styles.containerMark}>
-          <Grid sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}>
+          <Grid sx={{ display: { xs: "flex", md: "flex" }, mr: 1 }}>
             <Image
               id="id_image_logo"
               src={jacket}
@@ -443,9 +452,9 @@ const toggleDrawer = (newOpen) => () => {
             variant="subtitle1"
             noWrap
             component=""
-            sx={{ display: { xs: "none", md: "block" } }}
+            sx={{ display: { xs: "flex", md: "flex" } }}
           >
-            {dataUser ? dataUser[0].username : "Anonymous"}
+            ClashEcommerce
           </Typography>
           </div>
           </Link>
@@ -463,8 +472,10 @@ const toggleDrawer = (newOpen) => () => {
           <Box sx={{ flexGrow: 1 }}>
             <Grid container className={styles.containerNames}>
               <Typography
+                id="id_btn_man"
                 className={styles.genderOption}
-                onClick={handleProfileMenuOpenMale}
+                onMouseOver={(e)=>handleProfileMenuOpenMale(e)}
+                onClick={(e)=>handleProfileMenuOpenMale(e)}
                 variant="subtitle1"
                 noWrap
                 component="div"
@@ -474,8 +485,10 @@ const toggleDrawer = (newOpen) => () => {
               </Typography>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <Typography
+                id="id_btn_woman"
                 className={styles.genderOption}
-                onClick={handleProfileMenuOpenFemale}
+                onMouseOver={(e)=>handleProfileMenuOpenFemale(e)}
+                onClick={(e)=>handleProfileMenuOpenFemale(e)}
                 variant="subtitle1"
                 noWrap
                 component="div"
@@ -510,6 +523,7 @@ const toggleDrawer = (newOpen) => () => {
               size="large"
               aria-label="show shopping cart"
               color="inherit"
+              onMouseOver={()=>handleDrawer("cart")}
               onClick={()=>handleDrawer("cart")}
             >
               <Badge 
@@ -519,12 +533,14 @@ const toggleDrawer = (newOpen) => () => {
               </Badge>
             </IconButton>
             <IconButton
+              id="id_btn_profile"
               size="large"
               edge="end"
-              aria-label="account of current user"
+              aria-label="account of current user in this site"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
+              onMouseOver={(e)=>handleProfileMenuOpen(e)}
+              onClick={(e)=>handleProfileMenuOpen(e)} 
               color="inherit"
             >
               <AccountCircle />
@@ -532,10 +548,12 @@ const toggleDrawer = (newOpen) => () => {
           </Box>
           <Box sx={{ display: { xs: "flex", sm: "none" } }}>
             <IconButton
+              id="id_btn_dots_mobile"
               size="large"
               aria-label="show more"
               aria-controls={mobileMenuId}
               aria-haspopup="true"
+              onMouseOver={(e) => handleMobileMenuOpen(e, "right")}
               onClick={(e) => handleMobileMenuOpen(e, "right")}
               color="inherit"
             >

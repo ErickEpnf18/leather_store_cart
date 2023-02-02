@@ -3,13 +3,17 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import Carrousel from "@/components/carrousel";
 
-import { Container, Divider, Grid, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Collapse, Container, Divider, Grid, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import image from "imgs/jackOseaOprey.jpg";
 import Categories from "./categories";
 // import Footer from "components/footer";
 import { Card, Col, Row } from "react-bootstrap";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 const imageSport =
   "https://xcdn.next.co.uk/Common/Items/Default/Default/ItemImages/Search/224x336/403704.jpg?X56";
 const imageCoat =
@@ -20,7 +24,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import Layout from "@/components/layout";
 
 
+
+
 const Home = () => {
+  const [expanded, setExpanded] = useState(false);
+  const [value, setValue] = useState(false);
+
+
   const data_auth = useSelector((state) => state.auth);
   const karts = useSelector((state) => state.karts);
   const coats = useSelector((state) => state.coats);
@@ -38,7 +48,11 @@ const Home = () => {
   // console.log("makeup", makeup)
   // console.log("sportswear", sportswear)
   
-
+  const handleChange = (panel) => (event, isExpanded) => {
+    // event and isExpanded are callback functions
+    setExpanded(isExpanded ? panel : false);
+    console.log('panel is expanded', panel);
+  };
   return (
     <>
     <Layout>
@@ -47,7 +61,7 @@ const Home = () => {
       <Grid container spacing={2} s className={styles.container}>
         <div className={styles.container_title}>
           <Typography
-            variant="subtitle1"
+            variant="h6"
             // noWrap
             component="div"
             align="left"
@@ -188,8 +202,86 @@ const Home = () => {
           </Grid>
         </Grid>
       </Grid>
-      <Divider />
-      <Grid container></Grid>
+      <Grid container  className="flex align-items-center justify-content-center mt-4 mb-3 ">
+      <Typography variant="h4" gutterBottom align="left" paragraph component="div">
+      Preguntas frecuentes
+      </Typography>
+      <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')} sx={{ width: { xs: "95%", md: "90%" }}}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          focusVisibleClassName='m5'
+          aria-controls="panel1bh-content"
+          id="id_panel1"
+        >
+          <Typography sx={{ flexShrink: 0, fontWeight: expanded === 'panel1'? 'bold':''}}>
+          ¿Qué es la facturación electrónica?
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography sx={{ color: 'text.secondary' }}>
+          Una factura electrónica es un documento digital de índole fiscal: se expide y se recibe en formato electrónico estando condicionado a su destinatario, y tiene su origen en las legislaciones latinoamericanas que surgieron entre los años 2000 a 2005. 
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')} sx={{ width: { xs: "95%", md: "90%" }}}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          focusVisibleClassName='m5'
+          aria-controls="panel1bh-content"
+          id="id_panel2"
+        >
+          <Typography sx={{ flexShrink: 0, fontWeight: expanded === 'panel2'? 'bold':''}}>
+          ¿Cuánto tiempo se demora en llegar la factura a mi correo?
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography sx={{ color: 'text.secondary' }}>
+          Después de llenar el formulario y confirmar su compra, inmediatamente se enviara a su correo la compra de sus productos en un lapso de 20 minutos.
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+      
+      <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')} sx={{ width: { xs: "95%", md: "90%" }}}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          focusVisibleClassName='m5'
+          aria-controls="panel1bh-content"
+          id="id_panel3"
+        >
+          <Typography sx={{ flexShrink: 0, fontWeight: expanded === 'panel3'? 'bold':''}}>
+          ¿Existe mejores descuentos para mayoristas?
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography sx={{ color: 'text.secondary' }}>
+          Si, dependiendo del monto y de cuantos existan en Stock puede realizar su consulta en contactos.
+          Si, dependiendo del monto y de cuantos existan en Stock puede realizar su consulta en contactos.
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion  expanded={expanded === 'panel4'} onChange={handleChange('panel4')} sx={{ width: { xs: "95%", md: "90%" }}}
+>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          focusVisibleClassName='m5'
+          aria-controls="panel1bh-content"
+          id="id_panel4"
+        >
+          <Typography sx={{ flexShrink: 0, fontWeight: expanded === 'panel4'? 'bold':''}}>
+          ¿Qué ocurre si cancelo mi pedido o devuelvo algo?
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography sx={{ color: 'text.secondary' }}>
+          Si cancelas tu pedido o devuelves los productos, el sitio web rechazará la transacción y se cancelará automáticamente cualquier tipo de compra relacioanada.
+          </Typography>
+        </AccordionDetails>
+      </Accordion>
+
+      
+      </Grid>
     </Layout>
     </>
   );

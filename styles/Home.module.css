@@ -11,6 +11,12 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  color: black;
+}
+.container_center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .main {
