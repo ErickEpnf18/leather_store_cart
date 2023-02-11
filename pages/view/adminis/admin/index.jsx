@@ -16,9 +16,11 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 
+import Link from 'next/link';
+import Layout from '../../../../containers/Layout';
+import { sideBarItems } from '../../../../utils/json/sidebar';
+const some_items = ['Inbox', 'Starred', 'Send email', 'Drafts']
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -85,10 +87,13 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
   }),
 );
-
 export default function MiniDrawer() {
   const theme = useTheme();
+  console.log("theme", theme);
+
   const [open, setOpen] = React.useState(false);
+  const [itemSelected, setItemSelected] = React.useState({text: "", name: ""});
+  const [nameHeader, setNameHeader] = React.useState("");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -97,7 +102,6 @@ export default function MiniDrawer() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -116,22 +120,24 @@ export default function MiniDrawer() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
+            {nameHeader}
           </Typography>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
+          <Typography variant="h6">Administrador</Typography>
+          <IconButton id={`id_arrow_${theme.direction ? "right": "left" }`} onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+          {sideBarItems.admin.sideOne.map((text, index) => (
+            <ListItem key={text.name} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
-                sx={{
+              onClick={()=> {setItemSelected(index); 
+                setNameHeader(text.name)}}                sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
@@ -144,18 +150,19 @@ export default function MiniDrawer() {
                     justifyContent: 'center',
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {text.icon}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={text.name} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
-        <Divider />
+        <Divider variant/>
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+          {sideBarItems.admin.sideTwo.map((text, index) => (
+            <ListItem key={index} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
+                onClick={()=> {setItemSelected(index + sideBarItems.admin.sideOne.length); setNameHeader(text.name)}}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
@@ -169,9 +176,9 @@ export default function MiniDrawer() {
                     justifyContent: 'center',
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {text.icon}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={text.name} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -179,6 +186,8 @@ export default function MiniDrawer() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
+                  <Layout item={itemSelected}>
+
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
           tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
@@ -206,6 +215,7 @@ export default function MiniDrawer() {
           eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
           posuere sollicitudin aliquam ultrices sagittis orci a.
         </Typography>
+        </Layout>
       </Box>
     </Box>
   );
