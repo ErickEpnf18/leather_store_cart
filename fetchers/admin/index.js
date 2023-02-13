@@ -1,6 +1,6 @@
 import axios from "axios";
 const params = {
-  default: "/api/algo/algo/",
+  default: "",
   product: "/api/algo/algo/",
   one_product: "/api/algo/algo/",
   client: "/api/algo/algo/",

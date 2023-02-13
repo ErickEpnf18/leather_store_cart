@@ -21,46 +21,8 @@ import { sideBarItems } from '../../../utils/json/sidebar';
 import Link from 'next/link';
 import Layout from '../../../containers/Layout';
 import * as ic  from '../../../utils/icons';
-const names_one_sidebar = [
-  {
-    name: 'My Perfil',
-    link: 'administer/products',
-    icon: ic.icon_client,
-    index: "profile_client",
-  },
-  {
-    name: 'Carrito',
-    link: 'administer/clients',
-    icon: ic.icon_karts,
-    index: "profile_client",
-  },
-  {
-    name: 'Mis compras',
-    link: 'administer/clients',
-    icon: ic.icon_karts,
-    index: "profile_client",
-  },
-];
-const names_two_sidebar = [
-  {
-    name: 'Facturaciones',
-    link: 'administer/billings',
-    icon: ic.icon_billings,
-  },
-  // {
-  //   name: 'Correos',
-  //   link: 'administer/emails',
-  //   icon: ic.icon_emails,
-  // },
-  {
-    name: 'Salir',
-    link: 'administer/sellers',
-    icon: ic.icon_remove_client,
-  },
-];
-const some_items = ['Inbox', 'Starred', 'Send email', 'Drafts']
-const drawerWidth = 240;
 
+const drawerWidth = 240;
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create('width', {
@@ -128,18 +90,9 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export default function MiniDrawer() {
   const theme = useTheme();
-  console.log("theme", theme);
   const [open, setOpen] = React.useState(false);
-  const [itemSelected, setItemSelected] = React.useState({text: "", name: ""});
-  const [nameHeader, setNameHeader] = React.useState("");
+  const [itemSelected, setItemSelected] = React.useState({name: "Bienvenido", index: "welcome", rolName: "Cliente"});
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -148,7 +101,7 @@ export default function MiniDrawer() {
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            onClick={()=>setOpen(true)}
             edge="start"
             sx={{
               marginRight: 5,
@@ -158,14 +111,14 @@ export default function MiniDrawer() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            {nameHeader}
+            {itemSelected.name}
           </Typography>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <Typography variant="h6">Administrador</Typography>
-          <IconButton id={`id_arrow_${theme.direction ? "right": "left" }`} onClick={handleDrawerClose}>
+          <Typography variant="h6">{itemSelected.rolName}</Typography>
+          <IconButton id={`id_arrow_${theme.direction ? "right": "left" }`}  onClick={()=>setOpen(false)}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </DrawerHeader>
@@ -174,8 +127,8 @@ export default function MiniDrawer() {
           {sideBarItems.client.sideOne.map((text, index) => (
             <ListItem key={text.name} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
-              onClick={()=> {setItemSelected(index); 
-                setNameHeader(text.name)}}                sx={{
+            onClick={()=> {setItemSelected((prev)=>({...prev, name: text.name, index: text.index})); }}  
+              sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
                   px: 2.5,
@@ -200,7 +153,7 @@ export default function MiniDrawer() {
           {sideBarItems.client.sideTwo.map((text, index) => (
             <ListItem key={index} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
-                onClick={()=> {setItemSelected(index + sideBarItems.admin.sideOne.length); setNameHeader(text.name)}}
+              onClick={()=> {setItemSelected((prev)=>({...prev, name: text.name, index: text.index})); }}  
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? 'initial' : 'center',
@@ -224,8 +177,7 @@ export default function MiniDrawer() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-                  <Layout item={itemSelected}>
-
+        <Layout nameView={itemSelected.index}>
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
           tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
