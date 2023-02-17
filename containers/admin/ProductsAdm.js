@@ -35,10 +35,6 @@ const ProductsAdm = () => {
       {/* Products
       <button onClick={() => handleClick()}>click me!</button>
       <div>{data !== null ? JSON.stringify(data) : "estamos Cargando..."}</div> */}
-      <TableUsers />
-      <br/>
-      <br/>
-      <br/>
       <TableUsersTwo />
       <br/>
       <br/>

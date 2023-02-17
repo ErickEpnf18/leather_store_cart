@@ -70,6 +70,7 @@ import DomainAddIcon from "@mui/icons-material/DomainAdd";
 ///////////////Others///////////////
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import EditIcon from "@mui/icons-material/Edit";
 
 
 
@@ -96,6 +97,9 @@ export const icon_confirm_pay = <CreditScoreIcon/>;
 //////////////DELETE_ITEM///////////
  export const icon_delete_item = <DeleteForeverIcon/>;
 
+ //////////////EDIT_ITEM///////////
+ export const icon_edit_item = <EditIcon/>;
+
 //////////////SELLER///////////
 export   const icon_one_seller = <SellIcon/>;
 
@@ -105,6 +109,7 @@ export const icon_add_companie = <DomainAddIcon/>;
 ///////////////OTHER OPTIONS///////////////
 export const icon_emails = <MailIcon/>;
 export const icon_inboxes = <InboxIcon/>;
+
 
 
 
