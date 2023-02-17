@@ -39,7 +39,7 @@ const Layout = ({ children, nameView }) => {
       {nameView === "my_buying_client" && <MyBuyings />}
       {nameView === "billings_client" && <Billings />}
 
-      {nameView === "welcome" && <><Welcome /> {children}</>}
+      {nameView === "welcome" && <><Welcome /> </>}
     </div>
   );
 };

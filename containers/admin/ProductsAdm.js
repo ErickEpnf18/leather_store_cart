@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import {getData, listProduct} from "../../fetchers/admin";
-import {TableUsers} from "../Tables/TableUsers";
+import TableUsers from "../Tables/TableUsers";
+import TableUsersTwo from "../Tables/TableUsersTwo";
 
 
 const ProductsAdm = () => {
@@ -28,12 +29,20 @@ const ProductsAdm = () => {
     })();
   },[]);
 
+      
   return (
     <div>
-      Products
+      {/* Products
       <button onClick={() => handleClick()}>click me!</button>
-      <div>{data !== null ? JSON.stringify(data) : "estamos Cargando..."}</div>
+      <div>{data !== null ? JSON.stringify(data) : "estamos Cargando..."}</div> */}
       <TableUsers />
+      <br/>
+      <br/>
+      <br/>
+      <TableUsersTwo />
+      <br/>
+      <br/>
+      <br/>
     </div>
   );
 };
