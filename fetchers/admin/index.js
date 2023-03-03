@@ -1,8 +1,9 @@
 import axios from "axios";
+const urlDefault = "https://localhost:44356/api/"
 const params = {
-  default: "",
-  product: "/api/algo/algo/",
-  one_product: "/api/algo/algo/",
+  default: urlDefault,
+  product: "Productos",
+  product_delete: "/api/algo/algo/",
   client: "/api/algo/algo/",
   one_client: "/api/algo/algo/",
   employee: "/api/algo/algo/",
@@ -10,10 +11,11 @@ const params = {
   companie: "/api/algo/algo/",
   one_companie: "/api/algo/algo/",
 }
-const url = "https://pokeapi.co/api/v2/pokemon/ditto" + params.default;
+
 
   ///////////////PRODUCTS///////////
-  export async function listProduct() {
+  export async function listProducts() {
+    const url = params.default + params.product
     return new Promise(async (resolve, reject) => {
         await axios
           .get(url)
@@ -25,23 +27,27 @@ const url = "https://pokeapi.co/api/v2/pokemon/ditto" + params.default;
           });
       });
   }
+
   export async function deleteProduct(index) {
-    const listProducts = listProduct();
-    return await axios.get(url)
+    const url = params.default + params.product
+    return await axios.delete(url, { params: { id: index } })
         .then((res) => res)
         .catch((er) =>er);
   }
-  export async function addProduct(index) {
-    const listProducts = listProduct();
-    return await axios.get(url)
-        .then((res) => res)
-        .catch((er) =>er);
+  export async function addProduct(obj) {
+    const url = params.default + params.product
+    return await axios.post(url, {...obj}, {
+      'content-type': 'text/json' 
+    });
   }
-  export async function updateProduct(index) {
-    const listProducts = listProduct();
-    return await axios.get(url)
-        .then((res) => res)
-        .catch((er) =>er);
+  export async function updateProduct(index, obj) {
+    const url = params.default + params.product
+    return await axios.put(url,
+    // Add  data,
+     {...obj},
+     // params in the config 
+    { params: { id: index }
+  });
   }
 
   ///////////////CLIENTS///////////

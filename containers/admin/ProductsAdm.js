@@ -8,26 +8,26 @@ import TableUsersTwo from "../Tables/TableUsersTwo";
 const ProductsAdm = () => {
   const [item, setItem] = useState(null);
   const [data, setData] = useState(null);
-  async function handleClick() {
-    console.log("how many products");
-    setItem(Math.random());
+  // async function handleClick() {
+    // console.log("how many products");
+    // setItem(Math.random());
 
-    const listprod = await listProduct();
+    // const listprod = await listProduct();
 
-    console.log("list", listprod.data);
-    setData(listprod.data);
-  }
-  useEffect(() => {
-    console.log("clicked", item);
+    // console.log("list", listprod.data);
+    // setData(listprod.data);
+  // }
+  // useEffect(() => {
+  //   console.log("clicked", item);
 
-  }, []);
+  // }, []);
 
-  useEffect(() => {
-    (async ()=>{
-      const listprod = await listProduct();
-      setData(listprod.data);
-    })();
-  },[]);
+  // useEffect(() => {
+  //   (async ()=>{
+  //     const listprod = await listProduct();
+  //     setData(listprod.data);
+  //   })();
+  // },[]);
 
       
   return (
